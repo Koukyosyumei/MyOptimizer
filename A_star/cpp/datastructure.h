@@ -1,46 +1,55 @@
 #include <iostream>
 #include <map>
+#include <unordered_map>
 #include <queue>
 #include <cmath>
 using namespace std;
 
 template <typename T>
-struct OpenList:
+struct OpenList
 {
     priority_queue<int, vector<int>, greater<int>> indices;
-    map<int, vector<T>> nodes;
-    function<T(int)> idx_formula;
-
-    OpenList(function<T(int)> fn)
-    {
-        idx_formula = fn;
-    }
+    unordered_map<int, vector<T>> nodes;
+    T goal_node;
 
     bool isempty()
     {
-        return length(indices) == 0;
+        return indices.empty(); // O(1)
     }
 
     void insert(T node)
     {
-        idx = idx_formula(node);
-        if (nodes.count(idx))
+        int idx = node.get_evaluation_value(this->goal_node);
+        // O(1)
+        if (nodes.find(idx) != nodes.end())
         {
-            nodes[idx].push_back(node);
+            nodes[idx].push_back(node); // O(1)
         }
         else
         {
-            indices.push(idx);
-            nodes[idx] = vector<T>;
+            indices.push(idx); // O(1)
+            nodes[idx] = vector<T>();
             nodes[idx].push_back(node);
         }
     }
 
+    int get_idx_within_nodes(vector<T> node_vector, T node)
+    {
+        int idx = 0;
+        for (auto temp_node : node_vector)
+        {
+            if (node.isequal(temp_node))
+                break;
+            ++idx;
+        }
+        return idx;
+    }
+
     void remove(T node)
     {
-        idx = idx_formula(node);
-        remove(nodes[idx], nodes[idx], node);
-        if (lenfth(nodes[idx]) == 0)
+        int idx = node.get_evaluation_value(this->goal_node);
+        nodes[idx].erase(nodes[idx].begin() + get_idx_within_nodes(nodes[idx], node));
+        if (nodes[idx].empty())
         {
             nodes.erase(idx);
             indices.pop();
@@ -49,46 +58,40 @@ struct OpenList:
 
     T front()
     {
-        return nodes[indices[0]].back();
+        return nodes[indices.top()].back();
     }
 };
 
 template <typename T>
-struct Closedlist:
+struct ClosedList
 {
     priority_queue<int, vector<int>, greater<int>> indices;
-    map<int, vector<T>> nodes;
-    function<T(int)> idx_formula;
-
-    ClosedList(function<T(int)> fn)
-    {
-        idx_formula = fn;
-    }
+    unordered_map<int, vector<T>> nodes;
 
     void insert(T node)
     {
-        idx = idx_formula(node);
-        if (nodes.count(idx))
+        int idx = node.get_hash_value();
+        if (nodes.find(idx) == nodes.end())
         {
             nodes[idx].push_back(node);
         }
         else
         {
             indices.push(idx);
-            nodes[idx] = vector<T>;
+            nodes[idx] = vector<T>();
             nodes[idx].push_back(node);
         }
     }
 
     bool isclosed(T node)
     {
-        idx = idx_formula(node);
-        if (nodes.count(idx))
+        int idx = node.get_hash_value();
+        if (nodes.find(idx) != nodes.end())
         {
-            for (auto x : nodes[idx])
-                if (x == node)
-                    return true
+            for (auto temp_node : nodes[idx])
+                if (node.isequal(temp_node))
+                    return true;
         }
-        return false
+        return false;
     }
 };

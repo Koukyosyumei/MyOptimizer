@@ -4,9 +4,7 @@ from core import Game, Node
 
 
 class Node_N_Puzzle(Node):
-    def __init__(self, pattern, gfunc,
-                 move="start", nrow=3,
-                 weight=1):
+    def __init__(self, pattern, gfunc, move="start", nrow=3, weight=1):
 
         self.pattern = pattern
         self.gfunc = gfunc
@@ -46,7 +44,7 @@ class Node_N_Puzzle(Node):
         if self.blankloc != goal.blankloc:
             self.hfunc -= 1
 
-        self.ffunc = self.gfunc + self.weight*self.hfunc
+        self.ffunc = self.gfunc + self.weight * self.hfunc
 
         return self.hfunc, self.gfunc, self.ffunc
 
@@ -55,52 +53,55 @@ class Node_N_Puzzle(Node):
             return None
 
         left = copy.deepcopy(self.pattern)
-        left[self.blankloc[0]][self.blankloc[1]
-                               ] = left[self.blankloc[0]][self.blankloc[1]-1]
-        left[self.blankloc[0]][self.blankloc[1]-1] = 0
+        left[self.blankloc[0]][self.blankloc[1]] = left[self.blankloc[0]][
+            self.blankloc[1] - 1
+        ]
+        left[self.blankloc[0]][self.blankloc[1] - 1] = 0
 
-        return Node_N_Puzzle(left, self.gfunc+1, 'left')
+        return Node_N_Puzzle(left, self.gfunc + 1, "left")
 
     def moveright(self):
         if self.blankloc[1] == 2:
             return None
 
         right = copy.deepcopy(self.pattern)
-        right[self.blankloc[0]][self.blankloc[1]
-                                ] = right[self.blankloc[0]][self.blankloc[1]+1]
-        right[self.blankloc[0]][self.blankloc[1]+1] = 0
+        right[self.blankloc[0]][self.blankloc[1]] = right[self.blankloc[0]][
+            self.blankloc[1] + 1
+        ]
+        right[self.blankloc[0]][self.blankloc[1] + 1] = 0
 
-        return Node_N_Puzzle(right, self.gfunc+1, 'right')
+        return Node_N_Puzzle(right, self.gfunc + 1, "right")
 
     def moveup(self):
         if self.blankloc[0] == 0:
             return None
 
         up = copy.deepcopy(self.pattern)
-        up[self.blankloc[0]][self.blankloc[1]
-                             ] = up[self.blankloc[0]-1][self.blankloc[1]]
-        up[self.blankloc[0]-1][self.blankloc[1]] = 0
+        up[self.blankloc[0]][self.blankloc[1]] = up[self.blankloc[0] - 1][
+            self.blankloc[1]
+        ]
+        up[self.blankloc[0] - 1][self.blankloc[1]] = 0
 
-        return Node_N_Puzzle(up, self.gfunc+1, 'up')
+        return Node_N_Puzzle(up, self.gfunc + 1, "up")
 
     def movedown(self):
         if self.blankloc[0] == 2:
             return None
 
         down = copy.deepcopy(self.pattern)
-        down[self.blankloc[0]][self.blankloc[1]
-                               ] = down[self.blankloc[0]+1][self.blankloc[1]]
-        down[self.blankloc[0]+1][self.blankloc[1]] = 0
+        down[self.blankloc[0]][self.blankloc[1]] = down[self.blankloc[0] + 1][
+            self.blankloc[1]
+        ]
+        down[self.blankloc[0] + 1][self.blankloc[1]] = 0
 
-        return Node_N_Puzzle(down, self.gfunc+1, 'down')
+        return Node_N_Puzzle(down, self.gfunc + 1, "down")
 
     def moveall(self, game):
         movelist = ["moveleft", "moveright", "moveup", "movedown"]
         next_nodes = []
         for move in movelist:
             next_node = getattr(self, move)()
-            next_node = None if game.closedlist.isclosed(
-                next_node) else next_node
+            next_node = None if game.closedlist.isclosed(next_node) else next_node
             game.openlist.insert(next_node)
             next_nodes.append(next_node)
 
@@ -119,18 +120,18 @@ class Game_N_Puzzle(Game):
         super(Game_N_Puzzle, self).__init__(start, goal)
 
     def print_path(self):
-        move_reverse = {"up": "movedown",
-                        "down": "moveup",
-                        "right": "moveleft",
-                        "left": "moveright"}
+        move_reverse = {
+            "up": "movedown",
+            "down": "moveup",
+            "right": "moveleft",
+            "left": "moveright",
+        }
 
         presentNode = self.final_node
         while presentNode.move != "start":
             presentNode.print()
-            presentNode = getattr(
-                presentNode, move_reverse[presentNode.move])()
+            presentNode = getattr(presentNode, move_reverse[presentNode.move])()
 
-            for i in self.closedlist.\
-                    nodes[self.closedlist.idx_formula(presentNode)]:
+            for i in self.closedlist.nodes[self.closedlist.idx_formula(presentNode)]:
                 if i == presentNode:
                     presentNode = i
