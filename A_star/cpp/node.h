@@ -3,16 +3,20 @@
 #include <cmath>
 #include <time.h>
 #include <iostream>
+#include <string>
+#include <functional>
 #include "datastructure.h"
 using namespace std;
 
-#define mod 19997
+const long long mod = 10000000007;
+hash<string> hasher;
 
-map<string, pair<int, int>> movedict{
-    {"left", make_pair(0, -1)},
-    {"right", make_pair(0, 1)},
-    {"up", make_pair(-1, 0)},
-    {"down", make_pair(1, 0)}};
+map<string, pair<int, int>>
+    movedict{
+        {"left", make_pair(0, -1)},
+        {"right", make_pair(0, 1)},
+        {"up", make_pair(-1, 0)},
+        {"down", make_pair(1, 0)}};
 
 struct Node_N_Puzzle
 {
@@ -37,20 +41,19 @@ struct Node_N_Puzzle
         this->isnull = false;
     }
 
-    int get_hash_value()
+    long get_hash_value()
     {
-        int hash_value = 0;
-        int hash_a = 63689;
-        int hash_b = 378551;
+        string state_string = "";
+        state_string.reserve(pow(n, 2) * 2);
         for (int i = 0; i < this->n; ++i)
         {
             for (int j = 0; j < this->n; ++j)
             {
-                hash_value = hash_value * hash_a + this->pattern[i][j];
-                hash_a = hash_a * hash_b;
+                state_string += to_string(this->pattern[i][j]);
+                state_string += " ";
             }
         }
-        return hash_value;
+        return hasher(state_string);
     }
 
     int get_manhatten_distance(Node_N_Puzzle goal)
@@ -107,19 +110,7 @@ struct Node_N_Puzzle
 
     bool isequal(Node_N_Puzzle node)
     {
-        bool flag = true;
-        for (int i = 0; i < this->n; ++i)
-        {
-            for (int j = 0; j < this->n; ++j)
-            {
-                if (this->pattern[i][j] != node.pattern[i][j])
-                {
-                    flag = false;
-                    return flag;
-                }
-            }
-        }
-        return flag;
+        return equal(this->pattern.begin(), this->pattern.end(), node.pattern.begin());
     }
 
     void print()

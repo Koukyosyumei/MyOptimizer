@@ -58,40 +58,37 @@ struct OpenList
 
     T front()
     {
-        return nodes[indices.top()].back();
+        return nodes[indices.top()].front();
+    }
+
+    T pop()
+    {
+        int idx = indices.top();
+        T poped_node = nodes[idx].back();
+        nodes[idx].pop_back();
+        if (nodes[idx].empty())
+        {
+            nodes.erase(idx);
+            indices.pop();
+        }
+        return poped_node;
     }
 };
 
 template <typename T>
 struct ClosedList
 {
-    priority_queue<int, vector<int>, greater<int>> indices;
-    unordered_map<int, vector<T>> nodes;
+    unordered_map<long, T> hash_table;
 
     void insert(T node)
     {
-        int idx = node.get_hash_value();
-        if (nodes.find(idx) == nodes.end())
-        {
-            nodes[idx].push_back(node);
-        }
-        else
-        {
-            indices.push(idx);
-            nodes[idx] = vector<T>();
-            nodes[idx].push_back(node);
-        }
+        long idx = node.get_hash_value();
+        hash_table.insert({idx, node});
     }
 
     bool isclosed(T node)
     {
-        int idx = node.get_hash_value();
-        if (nodes.find(idx) != nodes.end())
-        {
-            for (auto temp_node : nodes[idx])
-                if (node.isequal(temp_node))
-                    return true;
-        }
-        return false;
+        long idx = node.get_hash_value();
+        return hash_table.find(idx) != hash_table.end();
     }
 };

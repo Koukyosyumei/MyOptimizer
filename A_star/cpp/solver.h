@@ -14,6 +14,7 @@ struct Solver_AStar
     T final_node;
     OpenList<T> openlist;
     ClosedList<T> closedlist;
+    int num_visited_node = 0;
 
     Solver_AStar(T start_node, T goal_node)
     {
@@ -31,22 +32,20 @@ struct Solver_AStar
 
         while (!openlist.isempty())
         {
-            present_node = openlist.front();
-            present_node.print();
-            cout << endl;
+            present_node = openlist.pop();
             if (present_node.isequal(this->goal_node))
             {
                 issolved = true;
                 break;
             }
 
-            openlist.remove(present_node);
             closedlist.insert(present_node);
+            ++num_visited_node;
 
             vector<T> candidates = present_node.get_all_children();
             for (auto next_node : candidates)
             {
-                if (!next_node.isnull)
+                if (!next_node.isnull && !closedlist.isclosed(next_node))
                     openlist.insert(next_node);
             }
         }

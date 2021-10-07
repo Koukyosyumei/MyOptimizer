@@ -15,8 +15,8 @@ void reverse_path_nqueen(Node_N_Puzzle final_node, ClosedList<Node_N_Puzzle> clo
     Node_N_Puzzle present_node = final_node;
     while (present_node.prev_move != "start")
     {
-        present_node.print();
-        cout << endl;
+        // present_node.print();
+        cout << present_node.prev_move << " ";
         if (present_node.prev_move == "up")
             present_node = present_node.get_child_node("down");
         else if (present_node.prev_move == "down")
@@ -26,11 +26,15 @@ void reverse_path_nqueen(Node_N_Puzzle final_node, ClosedList<Node_N_Puzzle> clo
         else if (present_node.prev_move == "right")
             present_node = present_node.get_child_node("left");
 
-        for (auto temp_node : closedlist.nodes[present_node.get_hash_value()])
+        present_node = closedlist.hash_table[present_node.get_hash_value()];
+        /*
+        for (auto temp_node : closedlist.hash_table[present_node.get_hash_value()])
         {
             if (present_node.isequal(temp_node))
                 present_node = temp_node;
         }
+        */
     }
-    present_node.print();
+    // present_node.print();
+    cout << endl;
 }

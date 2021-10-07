@@ -50,6 +50,8 @@ int main()
     end_time = clock();
     printf("time = %f[s]", (double)(end_time - start_time) / CLOCKS_PER_SEC);
     cout << endl;
+    cout << "num of visited nodes is " << solver.num_visited_node << endl;
+    cout << "node per sec is " << solver.num_visited_node / ((double)(end_time - start_time) / CLOCKS_PER_SEC) << endl;
 
     if (issolved)
     {
