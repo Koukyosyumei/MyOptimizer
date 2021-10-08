@@ -13,16 +13,16 @@ int main()
     cin >> n;
     cout << "dim of board is " << n << endl;
 
-    vector<vector<int>> start_pattern(n, vector<int>(n));
-    vector<vector<int>> goal_pattern(n, vector<int>(n));
+    vector<int> start_pattern(n * n);
+    vector<int> goal_pattern(n * n);
     pair<int, int> start_blank;
     pair<int, int> goal_blank;
     for (int i = 0; i < n; ++i)
     {
         for (int j = 0; j < n; ++j)
         {
-            cin >> start_pattern[i][j];
-            if (start_pattern[i][j] == 0)
+            cin >> start_pattern[i * n + j];
+            if (start_pattern[i * n + j] == 0)
                 start_blank = make_pair(i, j);
         }
     }
@@ -30,21 +30,22 @@ int main()
     {
         for (int j = 0; j < n; ++j)
         {
-            cin >> goal_pattern[i][j];
-            if (goal_pattern[i][j] == 0)
+            cin >> goal_pattern[i * n + j];
+            if (goal_pattern[i * n + j] == 0)
                 goal_blank = make_pair(i, j);
         }
     }
 
-    Node_N_Puzzle start_node = Node_N_Puzzle(n, w, 0, "start", start_pattern, start_blank);
-    Node_N_Puzzle goal_node = Node_N_Puzzle(n, w, 0, "goal", goal_pattern, goal_blank);
+    Node_N_Puzzle start_node = Node_N_Puzzle(n, w, 0, -1, "start", start_pattern, make_pair("", ""), start_blank);
+    Node_N_Puzzle goal_node = Node_N_Puzzle(n, w, 0, -1, "goal", goal_pattern, make_pair("", ""), goal_blank);
     cout << "start_node is " << endl;
     start_node.print();
     cout << "goal_node is " << endl;
     goal_node.print();
     cout << endl;
 
-    Solver_AStar<Node_N_Puzzle> solver = Solver_AStar<Node_N_Puzzle>(start_node, goal_node);
+    // Solver_AStar<Node_N_Puzzle> solver = Solver_AStar<Node_N_Puzzle>(start_node, goal_node);
+    Solver_IDAStar<Node_N_Puzzle> solver = Solver_IDAStar<Node_N_Puzzle>(start_node, goal_node);
     clock_t start_time, end_time;
     bool issolved = solver.solve();
     end_time = clock();

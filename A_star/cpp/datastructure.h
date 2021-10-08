@@ -19,7 +19,12 @@ struct OpenList
 
     void insert(T node)
     {
-        int idx = node.get_evaluation_value(this->goal_node);
+        int idx;
+        if (node.f < 0)
+            idx = node.get_evaluation_value(this->goal_node);
+        else
+            idx = node.f;
+
         // O(1)
         if (nodes.find(idx) != nodes.end())
         {
@@ -78,17 +83,15 @@ struct OpenList
 template <typename T>
 struct ClosedList
 {
-    unordered_map<long, T> hash_table;
+    unordered_map<string, T> hash_table;
 
     void insert(T node)
     {
-        long idx = node.get_hash_value();
-        hash_table.insert({idx, node});
+        hash_table.insert({node.get_state_string(), node});
     }
 
     bool isclosed(T node)
     {
-        long idx = node.get_hash_value();
-        return hash_table.find(idx) != hash_table.end();
+        return hash_table.find(node.get_state_string()) != hash_table.end();
     }
 };
