@@ -21,15 +21,11 @@ map<string, pair<int, int>>
         {"up", make_pair(-1, 0)},
         {"down", make_pair(1, 0)}};
 
-unordered_map<int, pair<pair<unordered_map<string, int>,
-                             unordered_map<string, vector<string>>>,
-                        pair<unordered_map<string, int>,
-                             unordered_map<string, vector<string>>>>>
+unordered_map<int, pair<unordered_map<string, int>,
+                        unordered_map<string, vector<string>>>>
     n_to_tables{
-        {3, make_pair(generate_vertical_table(3), generate_horizontal_table(3))},
-        {4, make_pair(generate_vertical_table(4), generate_horizontal_table(4))}};
-
-vector<int> test{1, 2, 3, 0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 4, 14, 15};
+        {3, generate_walking_distance_table(3)},
+        {4, generate_walking_distance_table(4)}};
 
 struct Node_N_Puzzle
 {
@@ -70,6 +66,30 @@ struct Node_N_Puzzle
         return state_string;
     }
 
+    int get_linear_conflict()
+    {
+        int conflict_value = 0;
+        for (int i = 0; i < n * n; ++i)
+        {
+            if (this->pattern[i] == 0)
+                continue;
+            if (this->pattern[i] / n == i / n)
+                for (int j = i + 1; j < ((i / n) + 1) * n; ++j)
+                    if ((this->pattern[j] > 0) &&
+                        (this->pattern[j] / n == i / n) &&
+                        (this->pattern[j] < this->pattern[i]))
+                        conflict_value += 2;
+            if (this->pattern[i] % n == i % n)
+                for (int j = i + n; j < n * n; j += n)
+                    if ((this->pattern[j] > 0) &&
+                        (this->pattern[j] % n == i % n) &&
+                        (this->pattern[j] < this->pattern[i]))
+                        conflict_value += 2;
+        }
+
+        return conflict_value;
+    }
+
     int get_misplaced_tiles(Node_N_Puzzle goal)
     {
         int distance = 0;
@@ -105,11 +125,12 @@ struct Node_N_Puzzle
     {
         int distance;
         if (this->h < 0)
-            distance = n_to_tables[n].first.first[encoded_pattern.first] +
-                       n_to_tables[n].second.first[encoded_pattern.second];
+            distance = n_to_tables[n].first[encoded_pattern.first] +
+                       n_to_tables[n].first[encoded_pattern.second];
         else
             distance = this->h;
 
+        // distance += get_linear_conflict();
         return distance;
     }
 
@@ -160,20 +181,11 @@ struct Node_N_Puzzle
             if (y == 0)
                 encoded_child_pattern_vertical = encoded_pattern.first;
             else
-            {
-                if (n_to_tables[n].first.second.find(this->encoded_pattern.first) == n_to_tables[n].first.second.end())
-                    return Node_N_Puzzle();
-                encoded_child_pattern_vertical = n_to_tables[n].first.second[this->encoded_pattern.first][get_position(y, (child_pattern[blank_idx] - 1) / this->n, n)];
-            }
+                encoded_child_pattern_vertical = n_to_tables[n].second[this->encoded_pattern.first][get_position(y, (child_pattern[blank_idx] - 1) / this->n, n)];
             if (x == 0)
                 encoded_child_pattern_horizontal = encoded_pattern.second;
             else
-            {
-                if (n_to_tables[n].second.second.find(this->encoded_pattern.second) == n_to_tables[n].second.second.end())
-                    encoded_child_pattern_horizontal = state_to_string(pattern_to_walking_state(n, child_pattern, 0));
-                else
-                    encoded_child_pattern_horizontal = n_to_tables[n].second.second[this->encoded_pattern.second][get_position(x, (child_pattern[blank_idx] - 1) % this->n, n)];
-            }
+                encoded_child_pattern_horizontal = n_to_tables[n].second[this->encoded_pattern.second][get_position(x, (child_pattern[blank_idx] - 1) % this->n, n)];
         }
 
         return Node_N_Puzzle(this->n, this->w, this->g + 1, next_h, move, child_pattern,
