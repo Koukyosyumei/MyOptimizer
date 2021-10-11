@@ -80,11 +80,10 @@ struct Solver_IDAStar
         int f_bound = 0;
         while (!this->issolved)
         {
-            openlist = OpenList<T>();
-            openlist.goal_node = goal_node;
+            openlist.initialize(goal_node);
             openlist.insert(this->start_node);
-            closedlist = ClosedList<T>();
-            cout << "f_bound is " << f_bound << endl;
+            closedlist.initialize();
+            // cout << "f_bound is " << f_bound << endl;
             f_bound = search(f_bound);
         }
         return this->issolved;

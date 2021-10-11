@@ -12,6 +12,13 @@ struct OpenList
     unordered_map<int, vector<T>> nodes;
     T goal_node;
 
+    void initialize(T g_node)
+    {
+        indices = priority_queue<int, vector<int>, greater<int>>();
+        nodes = unordered_map<int, vector<T>>();
+        goal_node = g_node;
+    }
+
     bool isempty()
     {
         return indices.empty(); // O(1)
@@ -87,11 +94,16 @@ struct ClosedList
 
     void insert(T node)
     {
-        hash_table.insert({node.get_state_string(), node});
+        hash_table.insert({node.state_string, node});
     }
 
     bool isclosed(T node)
     {
-        return hash_table.find(node.get_state_string()) != hash_table.end();
+        return hash_table.find(node.state_string) != hash_table.end();
+    }
+
+    void initialize()
+    {
+        hash_table = unordered_map<string, T>();
     }
 };

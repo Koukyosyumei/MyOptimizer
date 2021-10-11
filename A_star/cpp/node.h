@@ -4,6 +4,8 @@
 #include <time.h>
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <iterator>
 #include <functional>
 #include <unordered_map>
 #include "datastructure.h"
@@ -27,6 +29,15 @@ unordered_map<int, pair<unordered_map<string, int>,
         {3, generate_walking_distance_table(3)},
         {4, generate_walking_distance_table(4)}};
 
+string get_state_string(vector<int> state)
+{
+    stringstream ss;
+    copy(state.begin(), state.end(), ostream_iterator<int>(ss, " "));
+    string state_string = ss.str();
+    state_string = state_string.substr(0, state_string.length() - 1);
+    return state_string;
+}
+
 struct Node_N_Puzzle
 {
     int n, h, g, f, w;
@@ -35,6 +46,7 @@ struct Node_N_Puzzle
     vector<int> pattern;
     pair<int, int> blank;
     bool isnull;
+    string state_string;
 
     Node_N_Puzzle() { isnull = true; }
     Node_N_Puzzle(int n, int w, int g, int h, string prev_move,
@@ -55,15 +67,7 @@ struct Node_N_Puzzle
         this->h = h;
         this->f = -1;
         this->isnull = false;
-    }
-
-    string get_state_string()
-    {
-        string state_string = "";
-        state_string.reserve((n * n) * 2);
-        for (int i = 0; i < n * n; ++i)
-            state_string += to_string(this->pattern[i]) + " ";
-        return state_string;
+        this->state_string = get_state_string(this->pattern);
     }
 
     int get_linear_conflict()

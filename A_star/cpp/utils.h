@@ -27,7 +27,7 @@ void reverse_path_nqueen(Node_N_Puzzle final_node, ClosedList<Node_N_Puzzle> clo
         else if (present_node.prev_move == "right")
             present_node = present_node.get_child_node("left");
 
-        present_node = closedlist.hash_table[present_node.get_state_string()];
+        present_node = closedlist.hash_table[present_node.state_string];
     }
     present_node.print();
     cout << endl;
