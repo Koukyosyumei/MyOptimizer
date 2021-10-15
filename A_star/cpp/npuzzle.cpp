@@ -5,7 +5,7 @@
 #include "solver.h"
 #include "utils.h"
 
-const int w = 4;
+const int w = 5;
 
 int main()
 {

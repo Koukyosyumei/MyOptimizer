@@ -83,7 +83,7 @@ struct Solver_IDAStar
             openlist.initialize(goal_node);
             openlist.insert(this->start_node);
             closedlist.initialize();
-            // cout << "f_bound is " << f_bound << endl;
+            cout << "f_bound is " << f_bound << endl;
             f_bound = search(f_bound);
         }
         return this->issolved;

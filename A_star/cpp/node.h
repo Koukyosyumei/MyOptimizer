@@ -57,9 +57,9 @@ struct Node_N_Puzzle
         this->g = g;
         this->prev_move = prev_move;
         this->pattern = pattern;
-        if (encoded_pattern.first == "")
-            encoded_pattern = make_pair(state_to_string(pattern_to_walking_state(n, pattern, 1)),
-                                        state_to_string(pattern_to_walking_state(n, pattern, 0)));
+        if (encoded_pattern.first == "" || encoded_pattern.second == "")
+            this->encoded_pattern = make_pair(state_to_string(pattern_to_walking_state(n, pattern, 1)),
+                                              state_to_string(pattern_to_walking_state(n, pattern, 0)));
         else
             this->encoded_pattern = encoded_pattern;
         this->blank = blank;
