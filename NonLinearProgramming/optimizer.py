@@ -14,7 +14,7 @@ class Optimizer:
         pass
 
 
-class SGD(Optimizer):
+class GD(Optimizer):
     def __init__(self, func, var_num, scheduler, maxitr=100, log=10):
         super().__init__(func, var_num, maxitr=maxitr)
         self.scheduler = scheduler
