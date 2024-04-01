@@ -1,4 +1,4 @@
-# Optimization_from_Scratch
+# MyOptimizer
 
 This repository aims to implement various optimization and search algorithms.
 
